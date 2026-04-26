@@ -2,6 +2,7 @@ package com.example.crud.controller;
 
 import com.example.crud.entity.Employee;
 import com.example.crud.repository.EmployeeRepository;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/** REST API for employees (example CRUD controller). */
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController {
@@ -19,11 +21,8 @@ public class EmployeeController {
         this.employeeRepository = employeeRepository;
     }
 
-    /**
-     * PUT /employees/{id}
-     * Merge this method into your existing controller if you already have one.
-     */
-    @PutMapping("/{id}")
+    /** Updates an existing employee; returns 404 if id does not exist. */
+    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Employee> updateEmployee(
             @PathVariable Long id,
             @RequestBody Employee employeeDetails) {
@@ -32,8 +31,7 @@ public class EmployeeController {
                 .map(employee -> {
                     employee.setName(employeeDetails.getName());
                     employee.setEmail(employeeDetails.getEmail());
-                    Employee saved = employeeRepository.save(employee);
-                    return ResponseEntity.ok(saved);
+                    return ResponseEntity.ok(employeeRepository.save(employee));
                 })
                 .orElse(ResponseEntity.notFound().build());
     }
